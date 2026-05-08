@@ -1,0 +1,1218 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Pedro Training">
+<meta name="theme-color" content="#0a0a0a">
+<title>Pedro Training</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0a;
+    --surface: #141414;
+    --surface2: #1c1c1c;
+    --border: #2a2a2a;
+    --accent: #cc2200;
+    --accent-dim: rgba(204,34,0,0.15);
+    --accent-glow: rgba(204,34,0,0.3);
+    --teal: #4ecdc4;
+    --amber: #f59e0b;
+    --purple: #a78bfa;
+    --blue: #60a5fa;
+    --green: #34d399;
+    --text: #f0f0f0;
+    --muted: #666;
+    --muted2: #444;
+    --safe-bottom: env(safe-area-inset-bottom, 0px);
+    --safe-top: env(safe-area-inset-top, 0px);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+  html, body {
+    height: 100%;
+    overflow: hidden;
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+  }
+
+  /* ── LAYOUT ── */
+  #app {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    height: 100dvh;
+  }
+
+  #header {
+    padding: calc(var(--safe-top) + 16px) 20px 14px;
+    background: var(--bg);
+    border-bottom: 1px solid var(--border);
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  #header-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 28px;
+    letter-spacing: 0.05em;
+    color: var(--text);
+    line-height: 1;
+  }
+
+  #header-title span { color: var(--accent); }
+
+  #header-sub {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+    margin-top: 2px;
+  }
+
+  #header-badge {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    background: var(--accent-dim);
+    color: var(--accent);
+    border: 1px solid var(--accent-glow);
+    padding: 4px 10px;
+    border-radius: 20px;
+    letter-spacing: 0.05em;
+  }
+
+  /* ── TAB BAR ── */
+  #tab-bar {
+    display: flex;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    flex-shrink: 0;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  #tab-bar::-webkit-scrollbar { display: none; }
+
+  .tab-btn {
+    flex: 1;
+    min-width: 80px;
+    padding: 12px 8px;
+    background: none;
+    border: none;
+    color: var(--muted);
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    transition: color 0.2s;
+    border-bottom: 2px solid transparent;
+    position: relative;
+  }
+
+  .tab-btn .tab-icon { font-size: 18px; }
+  .tab-btn.active { color: var(--accent); border-bottom-color: var(--accent); }
+
+  /* ── CONTENT ── */
+  #content {
+    flex: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: calc(var(--safe-bottom) + 16px);
+  }
+
+  .tab-panel { display: none; }
+  .tab-panel.active { display: block; }
+
+  /* ── DAY SELECTOR ── */
+  .day-selector {
+    display: flex;
+    gap: 8px;
+    padding: 16px 16px 8px;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .day-selector::-webkit-scrollbar { display: none; }
+
+  .day-btn {
+    flex-shrink: 0;
+    padding: 8px 16px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    color: var(--muted);
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+  }
+
+  .day-btn.active {
+    background: var(--accent-dim);
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  /* ── SECTION CARDS ── */
+  .section-pad { padding: 0 16px 16px; }
+
+  .day-header {
+    padding: 16px 16px 8px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .day-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 26px;
+    letter-spacing: 0.04em;
+    color: var(--text);
+    line-height: 1;
+  }
+
+  .day-tag {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    padding: 4px 10px;
+    border-radius: 12px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  .tag-upper { background: rgba(59,130,246,0.15); color: #60a5fa; }
+  .tag-lower { background: rgba(16,185,129,0.15); color: #34d399; }
+  .tag-push  { background: rgba(255,107,53,0.15); color: #ff8c5a; }
+  .tag-pull  { background: rgba(78,205,196,0.15); color: #4ecdc4; }
+  .tag-rest  { background: rgba(100,100,100,0.1); color: var(--muted); }
+  .tag-full  { background: rgba(168,85,247,0.15); color: #c084fc; }
+
+  /* ── WARMUP ── */
+  .warmup-card {
+    margin: 0 16px 12px;
+    background: var(--surface);
+    border-left: 3px solid #ff4d00;
+    padding: 12px 14px;
+    border-radius: 0 8px 8px 0;
+  }
+
+  .warmup-card .warmup-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    color: #ff6b35;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+
+  .warmup-card p { font-size: 12px; color: #999; line-height: 1.6; }
+
+  /* ── EXERCISE CARD ── */
+  .ex-card {
+    margin: 0 16px 10px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+  }
+
+  .ex-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 14px;
+    cursor: pointer;
+    user-select: none;
+  }
+
+  .ex-num {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--muted2);
+    width: 24px;
+    flex-shrink: 0;
+  }
+
+  .ex-info { flex: 1; margin: 0 10px; }
+
+  .ex-name {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 2px;
+  }
+
+  .ex-sub {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+  }
+
+  .ex-sets {
+    font-family: 'DM Mono', monospace;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--accent);
+    white-space: nowrap;
+    text-align: right;
+  }
+
+  .ex-chevron {
+    font-size: 12px;
+    color: var(--muted2);
+    margin-left: 8px;
+    transition: transform 0.2s;
+    flex-shrink: 0;
+  }
+
+  .ex-card.open .ex-chevron { transform: rotate(180deg); }
+
+  .ex-details {
+    display: none;
+    padding: 0 14px 14px;
+    border-top: 1px solid var(--border);
+  }
+
+  .ex-card.open .ex-details { display: block; }
+
+  .ex-meta {
+    display: flex;
+    gap: 8px;
+    margin-top: 10px;
+    flex-wrap: wrap;
+  }
+
+  .meta-pill {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    padding: 3px 9px;
+    border-radius: 10px;
+    white-space: nowrap;
+  }
+
+  .pill-rpe  { background: var(--accent-dim); color: var(--accent); border: 1px solid var(--accent-glow); }
+  .pill-rest { background: rgba(100,100,100,0.1); color: #888; border: 1px solid var(--border); }
+
+  .ex-note {
+    margin-top: 10px;
+    font-size: 12px;
+    color: #888;
+    line-height: 1.6;
+  }
+
+  .ex-note strong { color: #bbb; }
+
+  /* ── MACRO CARD ── */
+  .macro-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    padding: 16px 16px 8px;
+  }
+
+  .macro-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px 12px;
+  }
+
+  .macro-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+  }
+
+  .macro-val {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 30px;
+    line-height: 1;
+  }
+
+  .macro-unit { font-size: 13px; opacity: 0.6; }
+
+  /* ── MEAL CARD ── */
+  .meal-card {
+    margin: 0 16px 12px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+  }
+
+  .meal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 14px;
+    cursor: pointer;
+  }
+
+  .meal-left { display: flex; align-items: center; gap: 10px; }
+  .meal-emoji { font-size: 20px; }
+
+  .meal-name {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text);
+  }
+
+  .meal-time {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    color: var(--muted);
+    margin-top: 2px;
+    letter-spacing: 0.05em;
+  }
+
+  .meal-kcal {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--accent);
+    background: var(--accent-dim);
+    padding: 3px 9px;
+    border-radius: 10px;
+  }
+
+  .meal-chevron {
+    font-size: 12px;
+    color: var(--muted2);
+    margin-left: 8px;
+    transition: transform 0.2s;
+  }
+
+  .meal-card.open .meal-chevron { transform: rotate(180deg); }
+
+  .meal-details {
+    display: none;
+    border-top: 1px solid var(--border);
+  }
+
+  .meal-card.open .meal-details { display: block; }
+
+  .food-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 14px;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+  }
+
+  .food-row:last-child { border-bottom: none; }
+
+  .food-name { font-size: 13px; color: var(--text); font-weight: 500; }
+  .food-qty  { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--muted); margin-top: 2px; }
+
+  .food-macros {
+    display: flex;
+    gap: 8px;
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+  }
+
+  .m-p { color: var(--teal); }
+  .m-c { color: var(--amber); }
+  .m-g { color: var(--purple); }
+
+  .food-note {
+    padding: 8px 14px 10px;
+    font-size: 11px;
+    color: #777;
+    line-height: 1.5;
+    background: rgba(255,255,255,0.02);
+    border-top: 1px solid rgba(255,255,255,0.04);
+  }
+
+  /* ── SUPP CARD ── */
+  .supp-card {
+    margin: 0 16px 10px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .supp-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--accent);
+    margin-top: 5px;
+    flex-shrink: 0;
+  }
+
+  .supp-name { font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 3px; }
+  .supp-time { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--accent); margin-bottom: 5px; }
+  .supp-note { font-size: 12px; color: #888; line-height: 1.5; }
+
+  /* ── CARDIO CARD ── */
+  .cardio-card {
+    margin: 0 16px 12px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px;
+    border-top: 3px solid var(--amber);
+  }
+
+  .cardio-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 20px;
+    letter-spacing: 0.04em;
+    color: var(--text);
+    margin-bottom: 8px;
+  }
+
+  .cardio-body { font-size: 13px; color: #999; line-height: 1.7; }
+  .cardio-body strong { color: #ddd; }
+
+  .zone-display {
+    margin: 12px 0;
+    background: var(--surface2);
+    border-radius: 8px;
+    padding: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .zone-label { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.1em; }
+  .zone-val { font-family: 'Bebas Neue', sans-serif; font-size: 28px; color: var(--amber); line-height: 1; }
+  .zone-unit { font-size: 12px; color: var(--muted); margin-left: 4px; }
+
+  /* ── INFO CARD ── */
+  .info-card {
+    margin: 0 16px 12px;
+    background: var(--surface);
+    border-left: 3px solid var(--accent);
+    border-radius: 0 8px 8px 0;
+    padding: 12px 14px;
+  }
+
+  .info-title {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    color: var(--accent);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+
+  .info-body { font-size: 12px; color: #999; line-height: 1.7; }
+  .info-body strong { color: #ccc; }
+
+  /* ── SECTION LABEL ── */
+  .section-label {
+    padding: 16px 16px 8px;
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  /* ── ALERT ── */
+  .alert-card {
+    margin: 0 16px 12px;
+    background: rgba(255,77,0,0.06);
+    border: 1px solid rgba(255,77,0,0.2);
+    border-left: 3px solid #ff4d00;
+    border-radius: 0 8px 8px 0;
+    padding: 12px 14px;
+    font-size: 12px;
+    color: #bbb;
+    line-height: 1.6;
+  }
+
+  .alert-card strong { color: #ff8c5a; }
+
+  /* ── REST DAY ── */
+  .rest-screen {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 60px 32px;
+    text-align: center;
+  }
+
+  .rest-icon { font-size: 48px; margin-bottom: 16px; }
+  .rest-title { font-family: 'Bebas Neue', sans-serif; font-size: 32px; color: var(--muted); letter-spacing: 0.05em; margin-bottom: 8px; }
+  .rest-sub { font-size: 13px; color: var(--muted2); line-height: 1.6; }
+
+  /* ── SCROLLBAR ── */
+  #content::-webkit-scrollbar { display: none; }
+</style>
+</head>
+<body>
+<div id="app">
+
+  <!-- HEADER -->
+  <div id="header">
+    <div>
+      <div id="header-title">PEDRO <span>TRAINING</span></div>
+      <div id="header-sub">61KG · 163CM · ~12%BF · AVANÇADO</div>
+    </div>
+    <div id="header-badge">BULK LIMPO</div>
+  </div>
+
+  <!-- TAB BAR -->
+  <div id="tab-bar">
+    <button class="tab-btn active" onclick="switchTab('t5')" id="btn-t5">
+      <span class="tab-icon">💪</span>5 DIAS
+    </button>
+    <button class="tab-btn" onclick="switchTab('t3')" id="btn-t3">
+      <span class="tab-icon">🔥</span>3 DIAS
+    </button>
+    <button class="tab-btn" onclick="switchTab('diet')" id="btn-diet">
+      <span class="tab-icon">🍽️</span>DIETA
+    </button>
+    <button class="tab-btn" onclick="switchTab('cardio')" id="btn-cardio">
+      <span class="tab-icon">🫀</span>CARDIO
+    </button>
+  </div>
+
+  <!-- CONTENT -->
+  <div id="content">
+
+    <!-- ═══════════════ TREINO 5 DIAS ═══════════════ -->
+    <div class="tab-panel active" id="panel-t5">
+      <div class="day-selector">
+        <button class="day-btn active" onclick="showDay('seg')">SEG</button>
+        <button class="day-btn" onclick="showDay('ter')">TER</button>
+        <button class="day-btn" onclick="showDay('qua')">QUA</button>
+        <button class="day-btn" onclick="showDay('qui')">QUI</button>
+        <button class="day-btn" onclick="showDay('sex')">SEX</button>
+        <button class="day-btn" onclick="showDay('sab')">SÁB</button>
+        <button class="day-btn" onclick="showDay('dom')">DOM</button>
+      </div>
+
+      <!-- SEGUNDA — UPPER A -->
+      <div class="day-panel" id="day-seg">
+        <div class="day-header">
+          <div class="day-title">UPPER A</div>
+          <span class="day-tag tag-upper">UPPER</span>
+        </div>
+        <div class="warmup-card">
+          <div class="warmup-label">⚡ Aquecimento 5–8 min</div>
+          <p>Band pull-aparts 2×15 · Rotação escapular com haltere leve 2×10 · Face pull leve 2×15 · 1–2 séries leves no supino (50–60% da carga)</p>
+        </div>
+        <div class="info-card">
+          <div class="info-title">🍋 Citrulina Malato</div>
+          <div class="info-body">Tome <strong>8g</strong> com água <strong>30–45 min antes</strong> do treino.</div>
+        </div>
+        <!-- exercises -->
+        <div id="ex-upper-a"></div>
+      </div>
+
+      <!-- TERÇA — LOWER A -->
+      <div class="day-panel" id="day-ter" style="display:none">
+        <div class="day-header">
+          <div class="day-title">LOWER A</div>
+          <span class="day-tag tag-lower">LOWER · QUAD</span>
+        </div>
+        <div class="warmup-card">
+          <div class="warmup-label">⚡ Aquecimento 5–8 min</div>
+          <p>Glute bridge 2×15 · Clamshell com band 2×15 cada · Leg swing frontal e lateral 10 cada · 1–2 séries leves no Hack Squat</p>
+        </div>
+        <div class="alert-card">
+          <strong>⚠ Joelhos:</strong> Hack Squat é o principal (menor dor). Se doer em algum dia, substitua por Leg Press. Agachamento livre e Smith fora.
+        </div>
+        <div id="ex-lower-a"></div>
+      </div>
+
+      <!-- QUARTA — PUSH -->
+      <div class="day-panel" id="day-qua" style="display:none">
+        <div class="day-header">
+          <div class="day-title">PUSH</div>
+          <span class="day-tag tag-push">PEIT · DELT · TRI</span>
+        </div>
+        <div class="warmup-card">
+          <div class="warmup-label">⚡ Aquecimento 5 min</div>
+          <p>Rotação de ombro com elástico 2×15 · Crossover leve no cabo 1×15 · 1 série leve no inclinado</p>
+        </div>
+        <div id="ex-push"></div>
+      </div>
+
+      <!-- QUINTA — PULL -->
+      <div class="day-panel" id="day-qui" style="display:none">
+        <div class="day-header">
+          <div class="day-title">PULL</div>
+          <span class="day-tag tag-pull">DORS · TRAP · BÍC</span>
+        </div>
+        <div class="warmup-card">
+          <div class="warmup-label">⚡ Aquecimento 5 min</div>
+          <p>Face pull leve 2×15 · Dislocação com elástico 1×10 · 1 série leve de pulley</p>
+        </div>
+        <div id="ex-pull"></div>
+      </div>
+
+      <!-- SEXTA — LOWER B -->
+      <div class="day-panel" id="day-sex" style="display:none">
+        <div class="day-header">
+          <div class="day-title">LOWER B</div>
+          <span class="day-tag tag-lower">LOWER · POST</span>
+        </div>
+        <div class="warmup-card">
+          <div class="warmup-label">⚡ Aquecimento 5–8 min</div>
+          <p>Hip thrust sem carga 2×15 · Monster walk com band 2×10m · Ponte de glúteo unipodal 2×10 cada</p>
+        </div>
+        <div id="ex-lower-b"></div>
+      </div>
+
+      <!-- SÁBADO — UPPER B -->
+      <div class="day-panel" id="day-sab" style="display:none">
+        <div class="day-header">
+          <div class="day-title">UPPER B</div>
+          <span class="day-tag tag-upper">OPCIONAL</span>
+        </div>
+        <div class="info-card">
+          <div class="info-title">ℹ️ Opcional</div>
+          <div class="info-body">Só faça se estiver bem recuperado. Caso contrário, converta em descanso ativo ou cardio leve.</div>
+        </div>
+        <div class="warmup-card">
+          <div class="warmup-label">⚡ Aquecimento 5 min</div>
+          <p>Face pull leve 2×15 · Rosca leve 1×15 · Tríceps leve 1×15</p>
+        </div>
+        <div id="ex-upper-b"></div>
+      </div>
+
+      <!-- DOMINGO — DESCANSO -->
+      <div class="day-panel" id="day-dom" style="display:none">
+        <div class="rest-screen">
+          <div class="rest-icon">😴</div>
+          <div class="rest-title">DESCANSO</div>
+          <div class="rest-sub">Recuperação é parte do treino.<br>O crescimento acontece aqui.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════ TREINO 3 DIAS ═══════════════ -->
+    <div class="tab-panel" id="panel-t3">
+      <div class="day-selector">
+        <button class="day-btn active" onclick="showDay3('fba')">FULL BODY A</button>
+        <button class="day-btn" onclick="showDay3('fbb')">FULL BODY B</button>
+      </div>
+
+      <!-- FULL BODY A -->
+      <div class="day-panel3" id="day3-fba">
+        <div class="day-header">
+          <div class="day-title">FULL BODY A</div>
+          <span class="day-tag tag-upper">SEG / SEX</span>
+        </div>
+        <div class="info-card">
+          <div class="info-title">📅 Estrutura da Semana</div>
+          <div class="info-body">Semana 1: <strong>A / B / A</strong> · Semana 2: <strong>B / A / B</strong><br>Mínimo 1 dia de descanso entre sessões.</div>
+        </div>
+        <div class="warmup-card">
+          <div class="warmup-label">⚡ Aquecimento 5 min</div>
+          <p>Band pull-aparts 2×15 · Glute bridge 2×15 · 1 série leve no primeiro exercício</p>
+        </div>
+        <div id="ex-fba"></div>
+      </div>
+
+      <!-- FULL BODY B -->
+      <div class="day-panel3" id="day3-fbb" style="display:none">
+        <div class="day-header">
+          <div class="day-title">FULL BODY B</div>
+          <span class="day-tag tag-pull">QUARTA</span>
+        </div>
+        <div class="warmup-card">
+          <div class="warmup-label">⚡ Aquecimento 5 min</div>
+          <p>Face pull leve 2×15 · Clamshell com band 2×15 · 1 série leve no primeiro exercício</p>
+        </div>
+        <div id="ex-fbb"></div>
+      </div>
+    </div>
+
+    <!-- ═══════════════ DIETA ═══════════════ -->
+    <div class="tab-panel" id="panel-diet">
+
+      <div class="macro-grid">
+        <div class="macro-card" style="border-top: 3px solid var(--accent);">
+          <div class="macro-label" style="color:var(--accent)">Calorias</div>
+          <div class="macro-val" style="color:var(--accent)">2.383<span class="macro-unit">kcal</span></div>
+        </div>
+        <div class="macro-card" style="border-top: 3px solid var(--teal);">
+          <div class="macro-label" style="color:var(--teal)">Proteína</div>
+          <div class="macro-val" style="color:var(--teal)">166<span class="macro-unit">g</span></div>
+        </div>
+        <div class="macro-card" style="border-top: 3px solid var(--amber);">
+          <div class="macro-label" style="color:var(--amber)">Carboidrato</div>
+          <div class="macro-val" style="color:var(--amber)">339<span class="macro-unit">g</span></div>
+        </div>
+        <div class="macro-card" style="border-top: 3px solid var(--purple);">
+          <div class="macro-label" style="color:var(--purple)">Gordura</div>
+          <div class="macro-val" style="color:var(--purple)">46<span class="macro-unit">g</span></div>
+        </div>
+      </div>
+
+      <div class="info-card" style="margin-bottom:4px;">
+        <div class="info-title">⚠️ Puran T4 — Protocolo</div>
+        <div class="info-body">Tomar <strong>ao acordar em jejum</strong>. Aguardar <strong>30–60 min</strong> antes de comer. Só água nesse intervalo. Nunca junto com cálcio, ferro ou multivitamínico.</div>
+      </div>
+
+      <div class="section-label">Refeições</div>
+
+      <!-- R1 -->
+      <div class="meal-card" id="meal-r1">
+        <div class="meal-header" onclick="toggleMeal('meal-r1')">
+          <div class="meal-left">
+            <span class="meal-emoji">☀️</span>
+            <div>
+              <div class="meal-name">Café da Manhã</div>
+              <div class="meal-time">~06h00 · Pré-treino</div>
+            </div>
+          </div>
+          <span class="meal-kcal">~530 kcal</span>
+          <span class="meal-chevron">▼</span>
+        </div>
+        <div class="meal-details">
+          <div class="food-row">
+            <div><div class="food-name">Pão francês</div><div class="food-qty">2 unidades (~100g)</div></div>
+            <div class="food-macros"><span class="m-p">P 8g</span><span class="m-c">C 55g</span><span class="m-g">G 2g</span></div>
+          </div>
+          <div class="food-row">
+            <div><div class="food-name">Requeijão cremoso</div><div class="food-qty">2 col. sopa (40g)</div></div>
+            <div class="food-macros"><span class="m-p">P 4g</span><span class="m-c">C 2g</span><span class="m-g">G 8g</span></div>
+          </div>
+          <div class="food-row">
+            <div><div class="food-name">Ovo mexido</div><div class="food-qty">1 unidade</div></div>
+            <div class="food-macros"><span class="m-p">P 6g</span><span class="m-c">C 0g</span><span class="m-g">G 5g</span></div>
+          </div>
+          <div class="food-row">
+            <div><div class="food-name">Muçarela fatiada</div><div class="food-qty">30g (1–2 fatias)</div></div>
+            <div class="food-macros"><span class="m-p">P 6g</span><span class="m-c">C 0g</span><span class="m-g">G 5g</span></div>
+          </div>
+          <div class="food-row">
+            <div><div class="food-name">Presunto fatiado</div><div class="food-qty">30g (2 fatias)</div></div>
+            <div class="food-macros"><span class="m-p">P 6g</span><span class="m-c">C 1g</span><span class="m-g">G 2g</span></div>
+          </div>
+          <div class="food-note">Prefira presunto com menor sódio se consumo for diário.</div>
+        </div>
+      </div>
+
+      <!-- R2 -->
+      <div class="meal-card" id="meal-r2">
+        <div class="meal-header" onclick="toggleMeal('meal-r2')">
+          <div class="meal-left">
+            <span class="meal-emoji">⚡</span>
+            <div>
+              <div class="meal-name">Pós-Treino</div>
+              <div class="meal-time">~09h–10h · Imediatamente após</div>
+            </div>
+          </div>
+          <span class="meal-kcal">~510 kcal</span>
+          <span class="meal-chevron">▼</span>
+        </div>
+        <div class="meal-details">
+          <div class="food-row">
+            <div><div class="food-name">Hypermass Growth</div><div class="food-qty">140g pó + água</div></div>
+            <div class="food-macros"><span class="m-p">P 30g</span><span class="m-c">C 92g</span><span class="m-g">G 2g</span></div>
+          </div>
+          <div class="food-row">
+            <div><div class="food-name">Creatina</div><div class="food-qty">6g — misturar no shake</div></div>
+            <div class="food-macros"><span class="m-p">—</span></div>
+          </div>
+          <div class="food-note">Tabela real Hypermass: 170g = 619 kcal, 36g PTN, 112g CHO, 3g LIP. Dose de 140g calculada proporcionalmente.</div>
+        </div>
+      </div>
+
+      <!-- R3 -->
+      <div class="meal-card" id="meal-r3">
+        <div class="meal-header" onclick="toggleMeal('meal-r3')">
+          <div class="meal-left">
+            <span class="meal-emoji">🍽️</span>
+            <div>
+              <div class="meal-name">Almoço</div>
+              <div class="meal-time">~13h00 · Refeição principal</div>
+            </div>
+          </div>
+          <span class="meal-kcal">~570 kcal</span>
+          <span class="meal-chevron">▼</span>
+        </div>
+        <div class="meal-details">
+          <div class="food-row">
+            <div><div class="food-name">Frango grelhado ou Carne moída</div><div class="food-qty">100g</div></div>
+            <div class="food-macros"><span class="m-p">P 24g</span><span class="m-c">C 0g</span><span class="m-g">G 3g</span></div>
+          </div>
+          <div class="food-row">
+            <div><div class="food-name">Arroz branco cozido</div><div class="food-qty">200g (~80g cru)</div></div>
+            <div class="food-macros"><span class="m-p">P 4g</span><span class="m-c">C 60g</span><span class="m-g">G 0g</span></div>
+          </div>
+          <div class="food-row">
+            <div><div class="food-name">Feijão carioca cozido</div><div class="food-qty">1 concha (~80g)</div></div>
+            <div class="food-macros"><span class="m-p">P 5g</span><span class="m-c">C 20g</span><span class="m-g">G 0g</span></div>
+          </div>
+          <div class="food-note">Alterne frango e carne moída ao longo da semana. Tempere com alho e azeite.</div>
+        </div>
+      </div>
+
+      <!-- R4 -->
+      <div class="meal-card" id="meal-r4">
+        <div class="meal-header" onclick="toggleMeal('meal-r4')">
+          <div class="meal-left">
+            <span class="meal-emoji">🥤</span>
+            <div>
+              <div class="meal-name">Lanche da Tarde</div>
+              <div class="meal-time">~17h–18h · Pré-cardio</div>
+            </div>
+          </div>
+          <span class="meal-kcal">~413 kcal</span>
+          <span class="meal-chevron">▼</span>
+        </div>
+        <div class="meal-details">
+          <div class="food-row">
+            <div><div class="food-name">Whey Carnibol</div><div class="food-qty">1 dose (~35g pó)</div></div>
+            <div class="food-macros"><span class="m-p">P 25g</span><span class="m-c">C 5g</span><span class="m-g">G 2g</span></div>
+          </div>
+          <div class="food-row">
+            <div><div class="food-name">Iogurte Parmalat Fit</div><div class="food-qty">1 pote (120g)</div></div>
+            <div class="food-macros"><span class="m-p">P 10g</span><span class="m-c">C 6g</span><span class="m-g">G 1g</span></div>
+          </div>
+          <div class="food-row">
+            <div><div class="food-name">Aveia em flocos</div><div class="food-qty">40g</div></div>
+            <div class="food-macros"><span class="m-p">P 5g</span><span class="m-c">C 24g</span><span class="m-g">G 3g</span></div>
+          </div>
+          <div class="food-row">
+            <div><div class="food-name">Frutas vermelhas congeladas</div><div class="food-qty">100g</div></div>
+            <div class="food-macros"><span class="m-p">P 1g</span><span class="m-c">C 10g</span><span class="m-g">G 0g</span></div>
+          </div>
+          <div class="food-row">
+            <div><div class="food-name">Mel</div><div class="food-qty">8g (~½ col. sopa)</div></div>
+            <div class="food-macros"><span class="m-p">P 0g</span><span class="m-c">C 6g</span><span class="m-g">G 0g</span></div>
+          </div>
+          <div class="food-note">Iogurte tem 194mg cálcio — sem problema no lanche da tarde, longe do Puran da manhã.</div>
+        </div>
+      </div>
+
+      <!-- R5 -->
+      <div class="meal-card" id="meal-r5">
+        <div class="meal-header" onclick="toggleMeal('meal-r5')">
+          <div class="meal-left">
+            <span class="meal-emoji">🌙</span>
+            <div>
+              <div class="meal-name">Jantar</div>
+              <div class="meal-time">~20h30–21h30 · Pós-cardio</div>
+            </div>
+          </div>
+          <span class="meal-kcal">~360 kcal</span>
+          <span class="meal-chevron">▼</span>
+        </div>
+        <div class="meal-details">
+          <div class="food-row">
+            <div><div class="food-name">Frango grelhado ou Carne moída</div><div class="food-qty">120g</div></div>
+            <div class="food-macros"><span class="m-p">P 29g</span><span class="m-c">C 0g</span><span class="m-g">G 4g</span></div>
+          </div>
+          <div class="food-row">
+            <div><div class="food-name">Arroz branco cozido</div><div class="food-qty">100g</div></div>
+            <div class="food-macros"><span class="m-p">P 2g</span><span class="m-c">C 26g</span><span class="m-g">G 0g</span></div>
+          </div>
+          <div class="food-row">
+            <div><div class="food-name">Feijão carioca cozido</div><div class="food-qty">1 concha (~80g)</div></div>
+            <div class="food-macros"><span class="m-p">P 5g</span><span class="m-c">C 20g</span><span class="m-g">G 0g</span></div>
+          </div>
+          <div class="food-note">Mesma proteína do almoço — alterne frango/carne para variar micronutrientes.</div>
+        </div>
+      </div>
+
+      <div class="section-label">Suplementação</div>
+
+      <div class="supp-card">
+        <div class="supp-dot" style="background:#ff6b35"></div>
+        <div>
+          <div class="supp-name">Puran T4 25mcg</div>
+          <div class="supp-time">AO ACORDAR — JEJUM</div>
+          <div class="supp-note">Aguardar 30–60 min antes de comer. Só água. Nunca junto com cálcio, ferro ou multivitamínico.</div>
+        </div>
+      </div>
+
+      <div class="supp-card">
+        <div class="supp-dot" style="background:var(--accent)"></div>
+        <div>
+          <div class="supp-name">Citrulina Malato 2:1</div>
+          <div class="supp-time">30–45 MIN PRÉ-TREINO</div>
+          <div class="supp-note">8g com água. ~5.5g de L-citrulina pura. Respeitar intervalo do Puran.</div>
+        </div>
+      </div>
+
+      <div class="supp-card">
+        <div class="supp-dot" style="background:var(--amber)"></div>
+        <div>
+          <div class="supp-name">Hypermass Growth</div>
+          <div class="supp-time">IMEDIATAMENTE PÓS-TREINO</div>
+          <div class="supp-note">140g pó + água. Janela anabólica: CHO rápido + proteína.</div>
+        </div>
+      </div>
+
+      <div class="supp-card">
+        <div class="supp-dot" style="background:var(--teal)"></div>
+        <div>
+          <div class="supp-name">Creatina Monoidratada</div>
+          <div class="supp-time">NO SHAKE PÓS-TREINO</div>
+          <div class="supp-note">6g misturado no Hypermass. Hidratação extra +500ml/dia.</div>
+        </div>
+      </div>
+
+      <div class="supp-card">
+        <div class="supp-dot" style="background:var(--blue)"></div>
+        <div>
+          <div class="supp-name">Whey Carnibol</div>
+          <div class="supp-time">LANCHE DA TARDE (R4)</div>
+          <div class="supp-note">1 dose (~35g pó) com água ou no iogurte.</div>
+        </div>
+      </div>
+
+      <div class="supp-card">
+        <div class="supp-dot" style="background:var(--purple)"></div>
+        <div>
+          <div class="supp-name">Multivitamínico Super Growth</div>
+          <div class="supp-time">ANTES DE DORMIR</div>
+          <div class="supp-note">Tomar com o jantar ou logo após — gordura presente melhora absorção de A, D, E, K.</div>
+        </div>
+      </div>
+
+      <div class="supp-card">
+        <div class="supp-dot" style="background:var(--green)"></div>
+        <div>
+          <div class="supp-name">Melatonina 5mg</div>
+          <div class="supp-time">30 MIN ANTES DE DORMIR</div>
+          <div class="supp-note">Pode tomar junto com o multivitamínico por praticidade.</div>
+        </div>
+      </div>
+
+      <div style="height:16px"></div>
+    </div>
+
+    <!-- ═══════════════ CARDIO ═══════════════ -->
+    <div class="tab-panel" id="panel-cardio">
+
+      <div class="zone-display" style="margin:16px 16px 0; border-radius:10px; background:var(--surface); border:1px solid var(--border);">
+        <div>
+          <div class="zone-label">Zona 2 — sua faixa</div>
+          <div style="font-size:12px; color:var(--muted); margin-top:4px;">FCmáx = 220 − 28 = 192 bpm</div>
+        </div>
+        <div style="text-align:right">
+          <div class="zone-val">125–134<span class="zone-unit">bpm</span></div>
+          <div style="font-size:11px; color:var(--muted); margin-top:2px;">65–70% FCmáx</div>
+        </div>
+      </div>
+
+      <div class="info-card" style="margin-top:12px;">
+        <div class="info-title">🎯 Objetivo</div>
+        <div class="info-body">VO₂ Máx atual: <strong>48.5 ml/kg/min</strong> → Alvo em 12 semanas: <strong>≥52 ml/kg/min</strong><br>Cardio sempre no período da <strong>noite</strong>, mínimo 6h após musculação.</div>
+      </div>
+
+      <div class="section-label">Protocolos</div>
+
+      <div class="cardio-card">
+        <div class="cardio-title">LISS — Zona 2</div>
+        <div class="cardio-body">
+          <strong>2× semana</strong> · 30–40 min · 65–70% FCmáx<br><br>
+          Esteira, bicicleta ergométrica, elíptico ou <strong>simulador de escada</strong> (válido — bom recrutamento de glúteo e menor impacto).<br><br>
+          <strong>Progressão:</strong> +5 min a cada 2 semanas até chegar a 45 min.<br><br>
+          <strong>Teste da fala:</strong> você consegue falar em frases completas mas não consegue cantar. Se estiver ofegante demais, baixe a intensidade.
+        </div>
+      </div>
+
+      <div class="cardio-card" style="border-top-color: var(--accent);">
+        <div class="cardio-title">HIIT — Sprints</div>
+        <div class="cardio-body">
+          <strong>1× semana</strong> · A partir da semana 3<br><br>
+          Aquecimento 5 min → <strong>8 × 30s sprint / 90s recuperação ativa</strong> → resfriamento 5 min.<br><br>
+          Bicicleta ergométrica (menor impacto nos joelhos). RPE 8–9 nos sprints.<br><br>
+          <strong>⚠ Nunca no dia de Lower.</strong> Nunca na semana de deload.
+        </div>
+      </div>
+
+      <div class="cardio-card" style="border-top-color: var(--teal);">
+        <div class="cardio-title">Deload &amp; Semanas de 3 Dias</div>
+        <div class="cardio-body">
+          <strong>Semana de Deload (S4):</strong> suspenda o cardio completamente.<br><br>
+          <strong>Semanas de 3 dias:</strong> 1–2 sessões de LISS (30 min) nos dias de descanso. Elimine o HIIT.
+        </div>
+      </div>
+
+      <div class="section-label">Periodização</div>
+
+      <div class="info-card">
+        <div class="info-title">📅 Bloco de 4 Semanas</div>
+        <div class="info-body">
+          <strong>S1:</strong> 2× LISS (30 min) · RPE 7–8<br>
+          <strong>S2:</strong> 2× LISS (35 min) · RPE 7–8<br>
+          <strong>S3:</strong> 2× LISS (40 min) + 1× HIIT · RPE 8–9<br>
+          <strong>S4:</strong> Deload — zero cardio
+        </div>
+      </div>
+
+      <div style="height:16px"></div>
+    </div>
+
+  </div><!-- /content -->
+</div><!-- /app -->
+
+<script>
+// ── DATA ──
+const exercises = {
+  'upper-a': [
+    { num:'A1', name:'Supino Reto com Halteres', sub:'Composto principal · Peitoral', sets:'4 × 6–10', rest:'3 min', rpe:'RPE 7–8', note:'<strong>Técnica:</strong> escápulas retraídas, halteres descem até sentir alongamento no peitoral, cotovelos ~75° do tronco. Seguro para treino solo. <strong>Sub:</strong> Chest press na máquina' },
+    { num:'B1', name:'Remada Curvada com Barra', sub:'Composto principal · Dorsal', sets:'4 × 6–10', rest:'2–3 min', rpe:'RPE 7–8', note:'<strong>Técnica:</strong> tronco ~45°, cotovelos puxam para o quadril, pausa de 1s no pico. <strong>Sub:</strong> Remada na máquina' },
+    { num:'C1', name:'Desenvolvimento com Halteres', sub:'Deltóide medial/anterior', sets:'3 × 8–12', rest:'2 min', rpe:'RPE 8', note:'Não trave o cotovelo no topo, controle excêntrico de 2s. <strong>Sub:</strong> Desenvolvimento na máquina' },
+    { num:'D1', name:'Pulley Frente (Pegada Supinada)', sub:'Dorsal/bíceps · Puxada', sets:'3 × 8–12', rest:'90 seg', rpe:'RPE 8', note:'Puxe pela articulação do cotovelo, não pela mão. Toque o peitoral na barra. <strong>Sub:</strong> Barra fixa assistida' },
+    { num:'E1', name:'Tríceps Pulley (corda)', sub:'Isolador · Cabeça lateral', sets:'2 × 12–15', rest:'60 seg', rpe:'RPE 8–9', note:'Abra a corda no ponto final para ativar cabeça lateral. <strong>Sub:</strong> Tríceps testa com halteres' },
+  ],
+  'lower-a': [
+    { num:'A1', name:'Hack Squat', sub:'Composto principal · Quadríceps', sets:'4 × 8–12', rest:'3 min', rpe:'RPE 7–8', note:'Pés na largura dos ombros, desça até amplitude confortável (90° ou ponto sem dor). <strong>Sub:</strong> Leg Press 45°' },
+    { num:'B1', name:'RDL com Barra', sub:'Isquiotibiais / posterior', sets:'4 × 8–10', rest:'3 min', rpe:'RPE 7–8', note:'Barra desliza pela perna, quadril puxa para trás, lombar neutra. Sinta o alongamento. Não arredonde. <strong>Sub:</strong> RDL com halteres' },
+    { num:'C1', name:'Cadeira Extensora', sub:'Isolador · Quadríceps', sets:'3 × 10–15', rest:'90 seg', rpe:'RPE 8–9', note:'Foco no alongamento (posição inferior). Pausa de 1s no topo. Não tem substituição específica.' },
+    { num:'D1', name:'Leg Curl Deitado', sub:'Isolador · Isquiotibiais', sets:'3 × 10–15', rest:'90 seg', rpe:'RPE 8–9', note:'Quadril pressiona o banco, não levante o glúteo. Excêntrico de 2–3s. <strong>Sub:</strong> Leg curl sentado' },
+    { num:'E1', name:'Panturrilha em Pé (máquina)', sub:'Gastrocnêmio', sets:'4 × 12–20', rest:'60 seg', rpe:'RPE 8', note:'Amplitude total — desce até sentir alongamento profundo. Pausa de 1s no topo. <strong>Sub:</strong> Panturrilha no leg press' },
+  ],
+  'push': [
+    { num:'A1', name:'Supino Inclinado com Halteres', sub:'Peitoral superior · Composto', sets:'4 × 8–12', rest:'2–3 min', rpe:'RPE 8', note:'Inclinação 30–45°, halteres descem até o peitoral sentir tensão, cotovelos ~75°. <strong>Sub:</strong> Supino inclinado na máquina' },
+    { num:'B1', name:'Crossover no Cabo (baixo → cima)', sub:'Peitoral inferior/médio', sets:'3 × 12–15', rest:'90 seg', rpe:'RPE 8–9', note:'Polea na posição baixa, mãos sobem e se encontram na altura do ombro. <strong>Sub:</strong> Fly com halteres' },
+    { num:'C1', name:'Elevação Lateral com Halteres', sub:'Deltóide medial', sets:'4 × 12–20', rest:'60 seg', rpe:'RPE 8', note:'Cotovelo levemente fletido, suba até a orelha. Cargas leves com técnica > carga alta com compensação. <strong>Sub:</strong> Elevação lateral no cabo' },
+    { num:'D1', name:'Tríceps Testa com EZ (deitado)', sub:'Cabeça longa do tríceps', sets:'2 × 10–14', rest:'60 seg', rpe:'RPE 8', note:'Braços perpendiculares ao tronco, cotovelo desce atrás da cabeça para alongar a cabeça longa. <strong>Sub:</strong> Tríceps pulley barra reta' },
+  ],
+  'pull': [
+    { num:'A1', name:'Barra Fixa (pegada pronada larga)', sub:'Dorsal · Composto principal', sets:'4 × 5–8', rest:'3 min', rpe:'RPE 7–8', note:'Deprime escápula antes de puxar, leve arqueamento no lombar, mento passa a barra. Se precisar de lastro, adicione. <strong>Sub:</strong> Pulley com barra larga' },
+    { num:'B1', name:'Remada Cavalinho / T-Bar', sub:'Dorsal/romboides · Espessura', sets:'4 × 8–12', rest:'2–3 min', rpe:'RPE 8', note:'Tronco mais horizontal que na curvada. Cotovelos ao lado do tronco para mais dorsal. <strong>Sub:</strong> Remada unilateral com haltere' },
+    { num:'C1', name:'Straight-Arm Pulldown (cabo)', sub:'Dorsal · Elongação máxima', sets:'3 × 12–15', rest:'90 seg', rpe:'RPE 8', note:'Polea alta, braços quase estendidos (cotovelo levemente fletido), desça em arco até o quadril. Também chamado de Pullover no cabo. <strong>Sub:</strong> Pullover com haltere na banca' },
+    { num:'D1', name:'Face Pull com Corda', sub:'Rotadores externos · Deltóide posterior', sets:'3 × 15–20', rest:'60 seg', rpe:'RPE 7', note:'Imprescindível para saúde do ombro. Puxe para o rosto, cotovelos acima dos ombros, abra a corda. Nunca pule. <strong>Sub:</strong> Rotação externa com elástico' },
+    { num:'E1', name:'Rosca Martelo com Halteres', sub:'Bíceps braquial + braquiorradial', sets:'3 × 10–14', rest:'60 seg', rpe:'RPE 8–9', note:'Pegada neutra. Alterne ou simultâneo. Excêntrico de 2s. <strong>Sub:</strong> Rosca no cabo (corda)' },
+  ],
+  'lower-b': [
+    { num:'A1', name:'Hip Thrust com Barra', sub:'Glúteo máximo · Composto', sets:'4 × 8–12', rest:'2–3 min', rpe:'RPE 8', note:'Banco na altura da omoplata, queixo reto, pelve em retroversão no topo. Pausa 1s com contração máxima. <strong>Sub:</strong> Elevação pélvica no chão com barra' },
+    { num:'B1', name:'Levantamento Terra Convencional', sub:'Posterior total · Composto', sets:'3 × 5–8', rest:'3–4 min', rpe:'RPE 7–8', note:'Quadril empurra o chão (não puxe a barra), lombar neutro, barra rente à perna. Nunca treine até a falha. <strong>Sub:</strong> RDL com halteres (dias de fadiga)' },
+    { num:'C1', name:'Leg Press 45° (pés altos)', sub:'Glúteo/posterior · Unilateral opcional', sets:'3 × 10–15', rest:'2 min', rpe:'RPE 7–8', note:'Pés na parte superior da plataforma aumenta glúteo e isquios. Pode fazer unilateral (uma perna por vez). <strong>Sub:</strong> Avanço com halteres se joelho permitir' },
+    { num:'D1', name:'Leg Curl Sentado', sub:'Isquiotibiais · Isolador', sets:'3 × 10–15', rest:'90 seg', rpe:'RPE 8–9', note:'Quadril flexionado maximiza o comprimento e estímulo dos isquios. <strong>Sub:</strong> Leg curl deitado' },
+    { num:'E1', name:'Panturrilha Sentado (sóleo)', sub:'Sóleo · Isolador', sets:'4 × 15–20', rest:'60 seg', rpe:'RPE 8', note:'Joelho flexionado isola o sóleo (diferente do gastrocnêmio do Lower A). Amplitude total.' },
+  ],
+  'upper-b': [
+    { num:'A1', name:'Fly Inclinado no Cabo', sub:'Peitoral superior · Tensão contínua', sets:'3 × 12–15', rest:'90 seg', rpe:'RPE 8', note:'Cabo em posição baixa, mãos se encontram acima. Cotovelo levemente fletido. <strong>Sub:</strong> Fly com halteres inclinado' },
+    { num:'B1', name:'Rosca Scott com Halteres', sub:'Bíceps · Pico de contração', sets:'3 × 10–14', rest:'90 seg', rpe:'RPE 8–9', note:'Braço apoiado no banco scott impede compensação. Excêntrico lento. <strong>Sub:</strong> Rosca concentrada' },
+    { num:'C1', name:'Elevação Lateral no Cabo', sub:'Deltóide medial · Tensão no alongamento', sets:'4 × 15–20', rest:'60 seg', rpe:'RPE 8', note:'Cabo abaixo do quadril, braço cruzado. Tensão maior no ponto de maior alongamento. <strong>Sub:</strong> Elevação lateral com haltere' },
+    { num:'D1', name:'Extensão de Tríceps Acima da Cabeça', sub:'Cabeça longa · Máximo alongamento', sets:'3 × 12–15', rest:'90 seg', rpe:'RPE 8', note:'Segure um haltere com ambas as mãos acima da cabeça. Cotovelo estático, só o antebraço desce. <strong>Sub:</strong> Tríceps no cabo acima da cabeça' },
+    { num:'E1', name:'Desenvolvimento Arnold', sub:'Deltóide · Todos os feixes', sets:'3 × 10–14', rest:'90 seg', rpe:'RPE 7–8', note:'Rotação interna → externa durante a subida. Maior range de movimento que o desenvolvimento neutro. <strong>Sub:</strong> Desenvolvimento com halteres neutro' },
+  ],
+  'fba': [
+    { num:'A1', name:'Supino Reto com Halteres', sub:'Peitoral · Empurrar horizontal', sets:'3 × 6–10', rest:'2–3 min', rpe:'RPE 7–8', note:'Mesmo padrão motor do Upper A. Mantém progressão de carga.' },
+    { num:'B1', name:'Hip Thrust com Barra', sub:'Glúteo · Posterior dominante', sets:'3 × 8–12', rest:'2 min', rpe:'RPE 8', note:'Pausa de 1s no topo. Mantém frequência de glúteo mesmo nas semanas curtas.' },
+    { num:'C1', name:'Barra Fixa (pegada pronada)', sub:'Dorsal · Puxar vertical', sets:'3 × 5–8', rest:'2–3 min', rpe:'RPE 7–8', note:'Se não conseguir reps suficientes, use pulley com barra larga na mesma carga.' },
+    { num:'D1', name:'Leg Curl Deitado', sub:'Isquiotibiais · Isolador', sets:'3 × 10–15', rest:'60 seg', rpe:'RPE 8–9', note:'Excêntrico de 2–3s. Mantém estímulo de isquios sem precisar de RDL nessa sessão.' },
+    { num:'E1', name:'Tríceps Pulley (corda)', sub:'Isolador · Tríceps', sets:'2 × 12–15', rest:'60 seg', rpe:'RPE 8', note:'Superset opcional com a rosca martelo abaixo para economizar tempo.' },
+    { num:'E2', name:'Rosca Martelo com Halteres', sub:'Isolador · Bíceps', sets:'2 × 10–14', rest:'60 seg', rpe:'RPE 8', note:'Superset com tríceps pulley — alterne sem descanso entre eles, descanse 60s após o par.' },
+  ],
+  'fbb': [
+    { num:'A1', name:'Remada Curvada com Barra', sub:'Dorsal · Puxar horizontal', sets:'3 × 6–10', rest:'2–3 min', rpe:'RPE 7–8', note:'Tronco ~45°, cotovelos puxam para o quadril. Complementa a barra fixa do Full Body A.' },
+    { num:'B1', name:'Hack Squat', sub:'Quadríceps · Composto', sets:'3 × 8–12', rest:'2–3 min', rpe:'RPE 7–8', note:'Amplitude controlada. Se houver dor no joelho, substitua por Leg Press 45°.' },
+    { num:'C1', name:'Supino Inclinado com Halteres', sub:'Peitoral superior · Empurrar inclinado', sets:'3 × 8–12', rest:'2 min', rpe:'RPE 8', note:'Ângulo diferente do supino reto do Full Body A — complementa o estímulo de peitoral.' },
+    { num:'D1', name:'RDL com Barra', sub:'Isquiotibiais · Posterior', sets:'3 × 8–10', rest:'2 min', rpe:'RPE 7–8', note:'Lombar neutra, quadril puxa para trás. Sinta o alongamento nos isquios antes de subir.' },
+    { num:'E1', name:'Elevação Lateral no Cabo', sub:'Deltóide medial · Isolador', sets:'3 × 15–20', rest:'60 seg', rpe:'RPE 8', note:'Cabo abaixo do quadril, braço cruzado. Tensão máxima no ponto de alongamento.' },
+    { num:'F1', name:'Face Pull com Corda', sub:'Rotadores externos · Saúde do ombro', sets:'2 × 15–20', rest:'60 seg', rpe:'RPE 7', note:'Nunca pule esse exercício, mesmo nas semanas curtas.' },
+  ],
+};
+
+// ── RENDER ──
+function renderExercises(key, containerId) {
+  const container = document.getElementById(containerId);
+  if (!container || container.children.length > 0) return;
+  const data = exercises[key];
+  if (!data) return;
+  data.forEach((ex, i) => {
+    const card = document.createElement('div');
+    card.className = 'ex-card';
+    card.id = `ex-${containerId}-${i}`;
+    card.innerHTML = `
+      <div class="ex-card-header" onclick="toggleEx('ex-${containerId}-${i}')">
+        <span class="ex-num">${ex.num}</span>
+        <div class="ex-info">
+          <div class="ex-name">${ex.name}</div>
+          <div class="ex-sub">${ex.sub}</div>
+        </div>
+        <div class="ex-sets">${ex.sets}</div>
+        <span class="ex-chevron">▼</span>
+      </div>
+      <div class="ex-details">
+        <div class="ex-meta">
+          <span class="meta-pill pill-rpe">${ex.rpe}</span>
+          <span class="meta-pill pill-rest">⏱ ${ex.rest}</span>
+        </div>
+        <div class="ex-note">${ex.note}</div>
+      </div>`;
+    container.appendChild(card);
+  });
+}
+
+// ── TOGGLE ──
+function toggleEx(id) {
+  document.getElementById(id).classList.toggle('open');
+}
+
+function toggleMeal(id) {
+  document.getElementById(id).classList.toggle('open');
+}
+
+// ── TAB SWITCH ──
+function switchTab(tab) {
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById(`panel-${tab}`).classList.add('active');
+  document.getElementById(`btn-${tab}`).classList.add('active');
+  document.getElementById('content').scrollTop = 0;
+}
+
+// ── DAY SWITCH (5 dias) ──
+const dayMap = {
+  seg: 'upper-a', ter: 'lower-a', qua: 'push', qui: 'pull', sex: 'lower-b', sab: 'upper-b'
+};
+const dayContainerMap = {
+  seg: 'ex-upper-a', ter: 'ex-lower-a', qua: 'ex-push', qui: 'ex-pull', sex: 'ex-lower-b', sab: 'ex-upper-b'
+};
+
+function showDay(day) {
+  document.querySelectorAll('#panel-t5 .day-panel').forEach(p => p.style.display = 'none');
+  document.querySelectorAll('#panel-t5 .day-btn').forEach(b => b.classList.remove('active'));
+  const panel = document.getElementById(`day-${day}`);
+  if (panel) panel.style.display = 'block';
+  event.currentTarget.classList.add('active');
+  if (dayMap[day]) renderExercises(dayMap[day], dayContainerMap[day]);
+  document.getElementById('content').scrollTop = 0;
+}
+
+// ── DAY SWITCH (3 dias) ──
+function showDay3(day) {
+  document.querySelectorAll('#panel-t3 .day-panel3').forEach(p => p.style.display = 'none');
+  document.querySelectorAll('#panel-t3 .day-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById(`day3-${day}`).style.display = 'block';
+  event.currentTarget.classList.add('active');
+  const key = day === 'fba' ? 'fba' : 'fbb';
+  const cid = day === 'fba' ? 'ex-fba' : 'ex-fbb';
+  renderExercises(key, cid);
+  document.getElementById('content').scrollTop = 0;
+}
+
+// ── INIT ──
+renderExercises('upper-a', 'ex-upper-a');
+renderExercises('fba', 'ex-fba');
+</script>
+</body>
+</html>
